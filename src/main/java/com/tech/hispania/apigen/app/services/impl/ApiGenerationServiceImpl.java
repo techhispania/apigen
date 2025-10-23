@@ -18,11 +18,8 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		
 		fileSystemService.setTempDirectory(".");
 		
-		fileSystemService.createDirectory("api-rest");
-		fileSystemService.createDirectory("api-rest/src");
-		fileSystemService.createDirectory("api-rest/src/main");
-		fileSystemService.createDirectory("api-rest/src/main/java");
-		fileSystemService.createDirectory("api-rest/src/main/resources");
+		fileSystemService.createRecursiveDirectory("api-rest/src/main/java");
+		fileSystemService.createRecursiveDirectory("api-rest/src/main/resources");
 		
 		return null;
 	}

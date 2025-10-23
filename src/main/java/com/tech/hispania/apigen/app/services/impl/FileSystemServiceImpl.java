@@ -45,4 +45,42 @@ public class FileSystemServiceImpl implements FileSystemService {
 			throw new ApiGenException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error generating directory. " + e.getMessage());
 		}
 	}
+	
+	@Override
+	public void createRecursiveDirectory(String path) throws ApiGenException {
+		
+		String[] tree = path.split("/");
+		
+		StringBuilder processedPath = new StringBuilder();
+		for(String directory : tree) {
+			if (processedPath.toString().length() == 0) {
+				try {
+					createDirectory(directory);
+					processedPath.append(directory);
+				} catch (ApiGenException e) {
+					if (HttpStatus.CONFLICT.value() == e.getCode()) {
+						logger.info("The first directory '{}' already exists. Continue...", directory);
+						processedPath.append(directory);
+						continue;
+					} else {
+						logger.error("Unexpected error creating the first directory '{}'", directory, e);
+						throw e;
+					}
+				}
+			} else {
+				processedPath.append("/").append(directory);
+				try {
+					createDirectory(processedPath.toString());	
+				} catch (ApiGenException e) {
+					if (HttpStatus.CONFLICT.value() == e.getCode()) {
+						logger.info("The directory '{}' already exists. Continue...", directory);
+						continue;
+					} else {
+						logger.error("Unexpected error creating the directory '{}'", directory, e);
+						throw e;
+					}
+				}
+			}
+		}
+	}
 }

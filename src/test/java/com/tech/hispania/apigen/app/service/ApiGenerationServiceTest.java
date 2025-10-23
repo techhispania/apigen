@@ -29,11 +29,11 @@ public class ApiGenerationServiceTest {
 	void whenGenerateIsExecutedThenFinishOk() throws ApiGenException {
 	
 		doNothing().when(fileSystemService).setTempDirectory(anyString());
-		doNothing().when(fileSystemService).createDirectory(anyString());
+		doNothing().when(fileSystemService).createRecursiveDirectory(anyString());
 
 		apiGenerationService.generate();
 		
 		verify(fileSystemService, times(1)).setTempDirectory(anyString());
-		verify(fileSystemService, times(5)).createDirectory(anyString());
+		verify(fileSystemService, times(2)).createRecursiveDirectory(anyString());
 	}
 }

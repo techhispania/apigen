@@ -22,4 +22,13 @@ public interface FileSystemService {
 	 * @throws ApiGenException
 	 */
 	void createDirectory(String path) throws ApiGenException;
+
+	/**
+	 * Create one directory and the parents if they not exists.
+	 * This method is used to create directories during the API REST generation
+	 * 
+	 * @param path The full path of the directory to be created
+	 * @throws ApiGenException
+	 */
+	void createRecursiveDirectory(String path) throws ApiGenException;
 }

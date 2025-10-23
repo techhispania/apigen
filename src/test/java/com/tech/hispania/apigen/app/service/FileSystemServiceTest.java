@@ -3,6 +3,9 @@ package com.tech.hispania.apigen.app.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.nio.file.Path;
 
@@ -82,5 +85,17 @@ public class FileSystemServiceTest {
 		ApiGenException apiGenException = (ApiGenException) exception;
 		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), apiGenException.getCode());
 		assertEquals("Unexpected error generating directory. null", apiGenException.getMessage());
+	}
+	
+	@Test
+	void givenAFullPathThenCreateAllDirectories() throws ApiGenException {
+		
+		String path = "one/two/three";
+		
+		fileSystemService.setTempDirectory(tempDirectory.toString());
+		
+		fileSystemService.createRecursiveDirectory(path);
+		
+		verify(fileSystemService, times(3)).createDirectory(anyString());
 	}
 }
