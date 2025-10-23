@@ -19,11 +19,14 @@ public class FileSystemServiceTest {
 	@TempDir
 	private Path tempDirectory;
 	
+	private FileSystemService fileSystemService = new FileSystemServiceImpl();
+	
 	@Test
 	void givenOneValidPathThenCreatesTheDirectory() throws ApiGenException {
 		
 		String path = "test_path";
-		FileSystemService fileSystemService = new FileSystemServiceImpl(tempDirectory.toString());
+		
+		fileSystemService.setTempDirectory(tempDirectory.toString());
 		
 		fileSystemService.createDirectory(path);
 	}
@@ -32,7 +35,8 @@ public class FileSystemServiceTest {
 	void givenOneValidPathWhenAlreadyExistsThenThrowsException() throws ApiGenException {
 		
 		String path = "test_path";
-		FileSystemService fileSystemService = new FileSystemServiceImpl(tempDirectory.toString());
+		
+		fileSystemService.setTempDirectory(tempDirectory.toString());
 		
 		fileSystemService.createDirectory(path);
 		
@@ -50,7 +54,8 @@ public class FileSystemServiceTest {
 	void givenOneInvalidPathThenThrowsException() {
 		
 		String path = "/root/invalid_path";
-		FileSystemService fileSystemService = new FileSystemServiceImpl(tempDirectory.toString());
+		
+		fileSystemService.setTempDirectory(tempDirectory.toString());
 		
 		Exception exception = assertThrows(Exception.class, () -> {
 			fileSystemService.createDirectory(path);
@@ -66,7 +71,8 @@ public class FileSystemServiceTest {
 	void givenOneNullPathThenThrowsException() {
 		
 		String path = null;
-		FileSystemService fileSystemService = new FileSystemServiceImpl(tempDirectory.toString());
+		
+		fileSystemService.setTempDirectory(tempDirectory.toString());
 		
 		Exception exception = assertThrows(Exception.class, () -> {
 			fileSystemService.createDirectory(path);

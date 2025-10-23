@@ -17,21 +17,12 @@ public class FileSystemServiceImpl implements FileSystemService {
 	
 	private File tempDirectory;
 	
-	/**
-	 * Constructor where you use the Java tmp directory as base path to
-	 * create a directory or a file
-	 */
 	public FileSystemServiceImpl() {
 		this.tempDirectory = new File(System.getProperty("java.io.tmpdir"));
 	}
 	
-	/**
-	 * Constructor where you can set the base path from where you want to
-	 * create a directory or a file
-	 * 
-	 * @param tempDirectory
-	 */
-	public FileSystemServiceImpl(String tempDirectory) {
+	@Override
+	public void setTempDirectory(String tempDirectory) {
 		this.tempDirectory = new File(tempDirectory);
 	}
 	
