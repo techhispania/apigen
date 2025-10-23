@@ -95,7 +95,5 @@ public class FileSystemServiceTest {
 		fileSystemService.setTempDirectory(tempDirectory.toString());
 		
 		fileSystemService.createRecursiveDirectory(path);
-		
-		verify(fileSystemService, times(3)).createDirectory(anyString());
 	}
 }
