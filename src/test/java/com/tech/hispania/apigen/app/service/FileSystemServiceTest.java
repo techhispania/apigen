@@ -3,9 +3,6 @@ package com.tech.hispania.apigen.app.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.nio.file.Path;
 
@@ -95,5 +92,18 @@ public class FileSystemServiceTest {
 		fileSystemService.setTempDirectory(tempDirectory.toString());
 		
 		fileSystemService.createRecursiveDirectory(path);
+	}
+	
+	@Test
+	void givenValidPathThenRemoveIt() throws ApiGenException {
+		
+		String path = "one/two/three";
+		String pathToBeDeleted = "one";
+		
+		fileSystemService.setTempDirectory(tempDirectory.toString());
+		
+		fileSystemService.createRecursiveDirectory(path);
+		
+		fileSystemService.removeDirectory(pathToBeDeleted);
 	}
 }

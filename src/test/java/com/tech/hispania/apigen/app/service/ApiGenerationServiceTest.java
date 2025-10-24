@@ -30,10 +30,13 @@ public class ApiGenerationServiceTest {
 	
 		doNothing().when(fileSystemService).setTempDirectory(anyString());
 		doNothing().when(fileSystemService).createRecursiveDirectory(anyString());
+		doNothing().when(fileSystemService).removeDirectory(anyString());
 
-		apiGenerationService.generate();
+		String apiName = "Planes";
+		apiGenerationService.generate(apiName);
 		
 		verify(fileSystemService, times(1)).setTempDirectory(anyString());
 		verify(fileSystemService, times(2)).createRecursiveDirectory(anyString());
+		verify(fileSystemService, times(1)).removeDirectory(anyString());
 	}
 }

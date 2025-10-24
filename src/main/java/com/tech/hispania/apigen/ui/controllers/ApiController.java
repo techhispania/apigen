@@ -29,7 +29,9 @@ public class ApiController {
 		logger.info("Generate REST API request received. {}", dto);
 		
 		try {
-			String result = apiGenerationService.generate();
+			String apiName = "Planes";
+			
+			String result = apiGenerationService.generate(apiName);
 		} catch (ApiGenException e) {
 			logger.error("Error generating REST API.", e);
 		}

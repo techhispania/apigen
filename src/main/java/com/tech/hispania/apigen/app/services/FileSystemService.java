@@ -31,4 +31,12 @@ public interface FileSystemService {
 	 * @throws ApiGenException
 	 */
 	void createRecursiveDirectory(String path) throws ApiGenException;
+	
+	/**
+	 * Remove a directory and all the files and sub folders that are inside that directory
+	 * 
+	 * @param path The path of the directory to be removed
+	 * @throws ApiGenException
+	 */
+	void removeDirectory(String path) throws ApiGenException;
 }

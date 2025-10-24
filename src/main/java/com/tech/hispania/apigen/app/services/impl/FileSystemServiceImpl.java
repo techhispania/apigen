@@ -83,4 +83,42 @@ public class FileSystemServiceImpl implements FileSystemService {
 			}
 		}
 	}
+	
+	@Override
+	public void removeDirectory(String path) throws ApiGenException {
+		logger.debug("Removing directory '{}'", path);
+		File directory = new File(tempDirectory, path);
+		
+		if (!removeFilesRecursive(directory)) {
+			logger.error("The full tree for path '{}' can't be removed", path);
+			throw new ApiGenException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "The full tree for path '" + path + "' can't be removed");
+		}
+		logger.debug("Directory '{}' removed", path);
+	}
+	
+	private boolean removeFilesRecursive(File directory) throws ApiGenException {
+		if (!directory.exists()) {
+		    logger.debug("File or directory '{}' does not exist. Skipping.", directory);
+		    return true;
+		}
+		
+		if (directory.isDirectory()) {
+			File[] files = directory.listFiles();
+			
+			if (files != null) {
+				for (File file : files) {
+					if (!removeFilesRecursive(file)) {
+						logger.error("Failed to remove '{}'", file);
+						throw new ApiGenException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to delete '" + file.getAbsolutePath() + "'");
+					}
+				}
+			}			
+		}
+		
+		if (!directory.delete()) {
+			logger.error("Failed to delete '{}'", directory.toString());
+			throw new ApiGenException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to delete '" + directory.getAbsolutePath() + "'");
+		}
+		return true;
+	}
 }
