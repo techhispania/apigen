@@ -106,4 +106,36 @@ public class FileSystemServiceTest {
 		
 		fileSystemService.removeDirectory(pathToBeDeleted);
 	}
+	
+	@Test
+	void givenValidPathAndValidFilenameThenCreateIt() throws ApiGenException {
+		String path = "one/two/three";
+		String filename = "test.java";
+		
+		fileSystemService.setTempDirectory(tempDirectory.toString());
+		
+		fileSystemService.createRecursiveDirectory(path);
+		
+		fileSystemService.createFile(path, filename);
+	}
+	
+	@Test
+	void givenInvalidPathAndValidFilenameWhenCreateItThenThrowException() throws ApiGenException {
+		String path = "one/two/three";
+		String wrongPath = "one/two/four";
+		String filename = "test.java";
+		
+		fileSystemService.setTempDirectory(tempDirectory.toString());
+		
+		fileSystemService.createRecursiveDirectory(path);
+		
+		Exception exception = assertThrows(Exception.class, () -> {
+			fileSystemService.createFile(wrongPath, filename);
+	    });
+		
+		assertTrue(exception instanceof ApiGenException);
+		ApiGenException apiGenException = (ApiGenException) exception;
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), apiGenException.getCode());
+		assertEquals("Unexpected error creating file 'one/two/four/test.java'. No such file or directory", apiGenException.getMessage());
+	}
 }

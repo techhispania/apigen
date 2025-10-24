@@ -39,4 +39,13 @@ public interface FileSystemService {
 	 * @throws ApiGenException
 	 */
 	void removeDirectory(String path) throws ApiGenException;
+	
+	/**
+	 * Create a file in one specific path
+	 * 
+	 * @param path The path where the file must be created
+	 * @param filename The name of the file to be created
+	 * @throws ApiGenException
+	 */
+	void createFile(String path, String filename) throws ApiGenException;
 }
