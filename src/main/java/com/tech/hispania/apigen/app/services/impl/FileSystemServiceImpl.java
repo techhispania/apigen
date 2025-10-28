@@ -121,4 +121,31 @@ public class FileSystemServiceImpl implements FileSystemService {
 		}
 		return true;
 	}
+	
+	@Override
+	public void createFile(String path, String filename) throws ApiGenException {
+		logger.debug("Creating file '{}' in the path '{}'", filename, path);
+		
+		String fullPath = new StringBuilder(path).append("/").append(filename).toString();
+		
+		try {
+			File file = new File(tempDirectory, fullPath);
+			
+			if (file.exists()) {
+				logger.warn("The file '{}' already exists", file.getAbsolutePath());
+				return;
+			}
+			
+			if (!file.createNewFile()) {
+				logger.error("The file '{}' can't be created", file.getAbsolutePath());
+			}
+		} catch (Exception e) {
+			if (e instanceof ApiGenException) {
+				throw (ApiGenException) e;
+			}
+			String errorMessage = String.format("Unexpected error creating file '%s'. %s", fullPath, e.getMessage());
+			logger.error(errorMessage, e);
+			throw new ApiGenException(HttpStatus.INTERNAL_SERVER_ERROR.value(), errorMessage);
+		}
+	}
 }
