@@ -3,6 +3,11 @@ package com.tech.hispania.apigen.app.services.impl;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +39,38 @@ public class FileTemplateServiceImpl implements FileTemplateService {
 		} catch (Exception e) {
 			logger.error("Unexpected error copying from template '{}' into file '{}'", template, path, e);
 			throw new ApiGenException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error copying from template '" + template + "' into file '" + path + "'. " + e.getMessage());
+		}
+	}
+	
+	@Override
+	public void replacePlaceholders(String path, Map<String, String> placeholders) throws ApiGenException {
+		logger.debug("Replacing placeholders in file '{}'", path);
+		
+		try {
+			File file = new File(path);
+			List<String> lines = Files.readAllLines(file.toPath());
+		
+			List<String> modifiedLines = new ArrayList<>();
+			
+			lines.forEach(line -> {
+				logger.debug("Processing line: {}", line);
+				for (Entry<String, String> placeholder : placeholders.entrySet()) {
+					String key = "{" + placeholder.getKey() + "}";
+					String value = placeholder.getValue();
+					
+					if (line.contains(key)) {
+						logger.debug("Replacing placeholder: '{}' with value '{}'", key, value);
+						line = line.replace(key, value);
+					}
+				}
+				modifiedLines.add(line);
+			});
+			
+			logger.debug("All lines processed. Writing in the file");
+			Files.write(file.toPath(), modifiedLines, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (Exception e) {
+			logger.error("Unexpected error replacing placeholders in file '{}'", path, e);
+			throw new ApiGenException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error replacing placeholders in file '" + path + "'. " + e.getMessage());
 		}
 	}
 }

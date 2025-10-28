@@ -1,5 +1,8 @@
 package com.tech.hispania.apigen.app.services.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +39,13 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		logger.info("Copying content from template");
 		fileTemplateService.copyTemplateInFile("main", "api-rest/src/main/java/com/apigen/" + apiName + "/App.java");
 		
+		logger.info("Replacing placeholders");
+		Map<String, String> placeholders = new HashMap<>();
+		placeholders.put("apiName", apiName);
+		fileTemplateService.replacePlaceholders("api-rest/src/main/java/com/apigen/" + apiName + "/App.java", placeholders);
+		
 		logger.info("Cleaning temporal directory");
-		//fileSystemService.removeDirectory("api-rest");
+		fileSystemService.removeDirectory("api-rest");
 		
 		return null;
 	}
