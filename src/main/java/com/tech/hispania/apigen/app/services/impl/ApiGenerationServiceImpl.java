@@ -2,6 +2,7 @@ package com.tech.hispania.apigen.app.services.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import com.tech.hispania.apigen.app.exceptions.ApiGenException;
 import com.tech.hispania.apigen.app.services.ApiGenerationService;
 import com.tech.hispania.apigen.app.services.FileSystemService;
 import com.tech.hispania.apigen.app.services.FileTemplateService;
+import com.tech.hispania.apigen.domain.model.ApiGenEntity;
 
 @Service
 public class ApiGenerationServiceImpl implements ApiGenerationService {
@@ -25,7 +27,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 	private FileTemplateService fileTemplateService;
 	
 	@Override
-	public String generate(String apiName) throws ApiGenException {
+	public String generate(String apiName, Set<ApiGenEntity> entities) throws ApiGenException {
 		
 		fileSystemService.setTempDirectory(".");
 		
