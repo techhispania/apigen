@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,10 @@ import com.tech.hispania.apigen.{package_name}.app.services.{api_name}Service;
 import com.tech.hispania.apigen.domain.model.ApiGenEntity;
 import com.tech.hispania.apigen.domain.model.ApiGenProperty;
 import com.tech.hispania.apigen.domain.model.PropertyType;
-import com.tech.hispania.apigen.{package_name}.ui.dto.ReadResponseDTO;
+import com.tech.hispania.apigen.{package_name}.ui.dto.mapping.{entity_name}Mapping;
+import com.tech.hispania.apigen.{package_name}.ui.dto.{entity_name}CreateRequestDTO;
+import com.tech.hispania.apigen.{package_name}.ui.dto.{entity_name}CreateResponseDTO;
+import com.tech.hispania.apigen.{package_name}.ui.dto.{entity_name}ReadResponseDTO;
 import com.tech.hispania.apigen.{package_name}.ui.dto.ResponseDTO;
 
 @RestController
@@ -30,14 +34,28 @@ public class {entity_name}Controller {
 	@Autowired
 	private {entity_name}Service service;
 	
-	@GetMapping()
+	@Autowired
+	private {entity_name}Mapping mapping;
+	
+	@PostMapping
+	public ResponseEntity<ResponseDTO> create({entity_name}CreateRequestDTO dto) {
+		logger.info("Create request. {}", dto);
+		
+		{entity_name} result = service.save(mapping.parseToEntity(dto));
+				
+		{entity_name}CreateResponseDTO response = new {entity_name}CreateResponseDTO();
+		response.set{entity_name}(result);
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping
 	public ResponseEntity<ResponseDTO> read() {
-		logger.info("Read all from database.");
+		logger.info("Read all request");
 		
 		List<{entity_name}> result = service.findAll();
 				
-		ReadResponseDTO response = new ReadResponseDTO();
-		response.setRecords(response);
+		{entity_name}ReadResponseDTO response = new {entity_name}ReadResponseDTO();
+		response.setRecords(result);
 		return ResponseEntity.ok(response);
 	}
 }

@@ -37,6 +37,8 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		
 		String javaPackage = new StringBuilder(JAVA_BASE_PATH).append(packageName).append("/").toString();
 		String controllersPackage = new StringBuilder(javaPackage).append("ui/controllers").toString();
+		String dtoPackage = new StringBuilder(javaPackage).append("ui/dto").toString();
+		String dtoMappingPackage = new StringBuilder(javaPackage).append("ui/dto/mapping").toString();
 		String entitiesPackage = new StringBuilder(javaPackage).append("domain/model/entities").toString();
 		String servicesPackage = new StringBuilder(javaPackage).append("app/services").toString();
 		String servicesImplPackage = new StringBuilder(javaPackage).append("app/services/impl").toString();
@@ -50,6 +52,8 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		logger.info("===============================");
 		fileSystemService.createRecursiveDirectory(javaPackage);
 		fileSystemService.createRecursiveDirectory(controllersPackage);
+		fileSystemService.createRecursiveDirectory(dtoPackage);
+		fileSystemService.createRecursiveDirectory(dtoMappingPackage);
 		fileSystemService.createRecursiveDirectory(entitiesPackage);
 		fileSystemService.createRecursiveDirectory(servicesImplPackage);
 		fileSystemService.createRecursiveDirectory(exceptionsPackage);
@@ -71,6 +75,10 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				logger.info("Creating files for entity '{}'", entity);
 				logger.info("===============================");
 				fileSystemService.createFile(entitiesPackage, new StringBuilder(capitalize(entity.name())).append(".java").toString());
+				fileSystemService.createFile(controllersPackage, new StringBuilder(capitalize(entity.name())).append("Controller.java").toString());
+				fileSystemService.createFile(dtoPackage, new StringBuilder(capitalize(entity.name())).append("CreateRequestDTO.java").toString());
+				fileSystemService.createFile(dtoPackage, new StringBuilder(capitalize(entity.name())).append("CreateResponseDTO.java").toString());
+				fileSystemService.createFile(dtoMappingPackage, new StringBuilder(capitalize(entity.name())).append("Mapping.java").toString());
 				fileSystemService.createFile(controllersPackage, new StringBuilder(capitalize(entity.name())).append("Controller.java").toString());
 				fileSystemService.createFile(persistencePackage, new StringBuilder(capitalize(entity.name())).append("Repository.java").toString());
 				fileSystemService.createFile(servicesPackage, new StringBuilder(capitalize(entity.name())).append("Service.java").toString());
@@ -100,7 +108,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 																				.toString(), entityPlaceholders);
 				
 			} catch (ApiGenException e) {
-				logger.warn("Error creating entity file '{}'.", entity.name(), e);
+				logger.warn("Error creating files for entity '{}'.", entity.name(), e);
 			}
 		});
 		
