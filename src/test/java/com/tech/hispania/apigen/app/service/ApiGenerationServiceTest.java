@@ -6,6 +6,10 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +21,9 @@ import com.tech.hispania.apigen.app.services.ApiGenerationService;
 import com.tech.hispania.apigen.app.services.FileSystemService;
 import com.tech.hispania.apigen.app.services.FileTemplateService;
 import com.tech.hispania.apigen.app.services.impl.ApiGenerationServiceImpl;
+import com.tech.hispania.apigen.domain.model.ApiGenEntity;
+import com.tech.hispania.apigen.domain.model.ApiGenProperty;
+import com.tech.hispania.apigen.domain.model.PropertyType;
 
 @ExtendWith(MockitoExtension.class)
 public class ApiGenerationServiceTest {
@@ -32,15 +39,25 @@ public class ApiGenerationServiceTest {
 	
 	@Test
 	void whenGenerateIsExecutedThenFinishOk() throws ApiGenException {
-	
+
+		String apiName = "Planes";
+		Set<ApiGenEntity> entities = new HashSet<>();
+		
+		ApiGenProperty modelProp = new ApiGenProperty("model", PropertyType.TEXT);
+		ApiGenProperty companyProp = new ApiGenProperty("company", PropertyType.TEXT);
+		
+		List<ApiGenProperty> planeEntityProperties = List.of(modelProp, companyProp);
+		ApiGenEntity planeEntity = new ApiGenEntity("plane", planeEntityProperties);
+		
+		entities.add(planeEntity);
+		
 		doNothing().when(fileSystemService).setTempDirectory(anyString());
 		doNothing().when(fileSystemService).createRecursiveDirectory(anyString());
 		doNothing().when(fileSystemService).removeDirectory(anyString());
 		doNothing().when(fileTemplateService).copyTemplateInFile(anyString(), anyString());
 		doNothing().when(fileTemplateService).replacePlaceholders(anyString(), anyMap());
 
-		String apiName = "Planes";
-		apiGenerationService.generate(apiName);
+		apiGenerationService.generate(apiName, entities);
 		
 		verify(fileSystemService, times(1)).setTempDirectory(anyString());
 		verify(fileSystemService, times(2)).createRecursiveDirectory(anyString());

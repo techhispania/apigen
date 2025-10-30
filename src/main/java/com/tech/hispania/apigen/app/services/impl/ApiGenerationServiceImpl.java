@@ -35,7 +35,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		
 		String packageName = apiName.toLowerCase().replace(" ", "/");
 		
-		String javaPackage = new StringBuilder(JAVA_BASE_PATH).append(packageName).toString();
+		String javaPackage = new StringBuilder(JAVA_BASE_PATH).append(packageName).append("/").toString();
 		String controllersPackage = new StringBuilder(javaPackage).append("ui/controllers").toString();
 		String entitiesPackage = new StringBuilder(javaPackage).append("domain/model/entities").toString();
 		String servicesPackage = new StringBuilder(javaPackage).append("app/services").toString();
@@ -60,24 +60,35 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		logger.info("Creating files");
 		logger.info("===============================");
 		fileSystemService.createFile(javaPackage, new StringBuilder(capitalize(apiName)).append("Application.java").toString());
-		fileSystemService.createFile(controllersPackage, "ApiController.java");
+		
+		entities.forEach(entity -> {
+			try {
+				fileSystemService.createFile(entitiesPackage, new StringBuilder(capitalize(entity.name())).append(".java").toString());
+				fileSystemService.createFile(controllersPackage, new StringBuilder(capitalize(entity.name())).append("Controller.java").toString());
+				fileSystemService.createFile(persistencePackage, new StringBuilder(capitalize(entity.name())).append("Repository.java").toString());
+				fileSystemService.createFile(servicesPackage, new StringBuilder(capitalize(entity.name())).append("Service.java").toString());
+				fileSystemService.createFile(servicesImplPackage, new StringBuilder(capitalize(entity.name())).append("ServiceImpl.java").toString());
+			} catch (ApiGenException e) {
+				logger.warn("Error creating entity file '{}'.", entity.name(), e);
+			}
+		});
 		
 		logger.info("===============================");
 		logger.info("Copying content from template");
 		logger.info("===============================");
-		fileTemplateService.copyTemplateInFile("main", "api-rest/src/main/java/com/apigen/" + packageName + "/App.java");
+		//fileTemplateService.copyTemplateInFile("main", "api-rest/src/main/java/com/apigen/" + packageName + "/App.java");
 		
 		logger.info("===============================");
 		logger.info("Replacing placeholders");
 		logger.info("===============================");
 		Map<String, String> placeholders = new HashMap<>();
 		placeholders.put("apiName", apiName);
-		fileTemplateService.replacePlaceholders("api-rest/src/main/java/com/apigen/" + packageName + "/App.java", placeholders);
+//		fileTemplateService.replacePlaceholders("api-rest/src/main/java/com/apigen/" + packageName + "/App.java", placeholders);
 		
 		logger.info("===============================");
 		logger.info("Cleaning temporal directory");
 		logger.info("===============================");
-		fileSystemService.removeDirectory("api-rest");
+//		fileSystemService.removeDirectory("api-rest");
 		
 		return null;
 	}
