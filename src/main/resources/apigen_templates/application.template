@@ -1,0 +1,12 @@
+package com.apigen.{package_name};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class {api_name}Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run({api_name}Application.class, args);
+	}
+}

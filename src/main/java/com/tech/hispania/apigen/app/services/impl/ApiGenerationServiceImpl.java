@@ -60,30 +60,49 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		logger.info("Creating files");
 		logger.info("===============================");
 		fileSystemService.createFile(javaPackage, new StringBuilder(capitalize(apiName)).append("Application.java").toString());
-		
+		fileTemplateService.copyTemplateInFile("application", new StringBuilder(javaPackage).append(capitalize(apiName)).append("Application.java").toString());
+		Map<String, String> placeholders = new HashMap<>();
+		placeholders.put("package_name", packageName);
+		placeholders.put("api_name", capitalize(apiName));
+		fileTemplateService.replacePlaceholders(new StringBuilder(javaPackage).append(capitalize(apiName)).append("Application.java").toString(), placeholders);
 		entities.forEach(entity -> {
 			try {
+				logger.info("===============================");
+				logger.info("Creating files for entity '{}'", entity);
+				logger.info("===============================");
 				fileSystemService.createFile(entitiesPackage, new StringBuilder(capitalize(entity.name())).append(".java").toString());
 				fileSystemService.createFile(controllersPackage, new StringBuilder(capitalize(entity.name())).append("Controller.java").toString());
 				fileSystemService.createFile(persistencePackage, new StringBuilder(capitalize(entity.name())).append("Repository.java").toString());
 				fileSystemService.createFile(servicesPackage, new StringBuilder(capitalize(entity.name())).append("Service.java").toString());
 				fileSystemService.createFile(servicesImplPackage, new StringBuilder(capitalize(entity.name())).append("ServiceImpl.java").toString());
+				
+				
+				logger.info("===============================");
+				logger.info("Copying content from templates");
+				logger.info("===============================");
+				fileTemplateService.copyTemplateInFile("controller", new StringBuilder(controllersPackage)
+																							.append("/")
+																							.append(capitalize(entity.name()))
+																							.append("Controller.java")
+																							.toString());
+				
+				logger.info("===============================");
+				logger.info("Replacing placeholders");
+				logger.info("===============================");
+				Map<String, String> entityPlaceholders = new HashMap<>();
+				entityPlaceholders.put("package_name", packageName);
+				entityPlaceholders.put("api_name", capitalize(apiName));
+				entityPlaceholders.put("entity_name", capitalize(entity.name()));
+				fileTemplateService.replacePlaceholders(new StringBuilder(controllersPackage)
+																				.append("/")
+																				.append(capitalize(entity.name()))
+																				.append("Controller.java")
+																				.toString(), entityPlaceholders);
+				
 			} catch (ApiGenException e) {
 				logger.warn("Error creating entity file '{}'.", entity.name(), e);
 			}
 		});
-		
-		logger.info("===============================");
-		logger.info("Copying content from template");
-		logger.info("===============================");
-		//fileTemplateService.copyTemplateInFile("main", "api-rest/src/main/java/com/apigen/" + packageName + "/App.java");
-		
-		logger.info("===============================");
-		logger.info("Replacing placeholders");
-		logger.info("===============================");
-		Map<String, String> placeholders = new HashMap<>();
-		placeholders.put("apiName", apiName);
-//		fileTemplateService.replacePlaceholders("api-rest/src/main/java/com/apigen/" + packageName + "/App.java", placeholders);
 		
 		logger.info("===============================");
 		logger.info("Cleaning temporal directory");

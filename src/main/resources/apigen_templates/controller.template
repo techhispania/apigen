@@ -1,0 +1,43 @@
+package com.apigen.{package_name}.ui.controllers;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tech.hispania.apigen.{package_name}.app.exceptions.ApiGenException;
+import com.tech.hispania.apigen.{package_name}.app.services.{api_name}Service;
+import com.tech.hispania.apigen.domain.model.ApiGenEntity;
+import com.tech.hispania.apigen.domain.model.ApiGenProperty;
+import com.tech.hispania.apigen.domain.model.PropertyType;
+import com.tech.hispania.apigen.{package_name}.ui.dto.ReadResponseDTO;
+import com.tech.hispania.apigen.{package_name}.ui.dto.ResponseDTO;
+
+@RestController
+@RequestMapping("/{entity_name}")
+public class {entity_name}Controller {
+
+	private static final Logger logger = LogManager.getLogger({entity_name}Controller.class);
+	
+	@Autowired
+	private {entity_name}Service service;
+	
+	@GetMapping()
+	public ResponseEntity<ResponseDTO> read() {
+		logger.info("Read all from database.");
+		
+		List<{entity_name}> result = service.findAll();
+				
+		ReadResponseDTO response = new ReadResponseDTO();
+		response.setRecords(response);
+		return ResponseEntity.ok(response);
+	}
+}
