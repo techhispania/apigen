@@ -1,12 +1,14 @@
 package com.tech.hispania.apigen.app.services.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.tech.hispania.apigen.app.exceptions.ApiGenException;
@@ -14,6 +16,8 @@ import com.tech.hispania.apigen.app.services.ApiGenerationService;
 import com.tech.hispania.apigen.app.services.FileSystemService;
 import com.tech.hispania.apigen.app.services.FileTemplateService;
 import com.tech.hispania.apigen.domain.model.ApiGenEntity;
+import com.tech.hispania.apigen.domain.model.ApiGenProperty;
+import com.tech.hispania.apigen.domain.model.PropertyType;
 
 @Service
 public class ApiGenerationServiceImpl implements ApiGenerationService {
@@ -93,7 +97,11 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 																							.append(capitalize(entity.name()))
 																							.append("Controller.java")
 																							.toString());
-				
+				fileTemplateService.copyTemplateInFile("create_request_dto", new StringBuilder(dtoPackage)
+																							.append("/")
+																							.append(capitalize(entity.name()))
+																							.append("CreateRequestDTO.java")
+																							.toString());				
 				logger.info("===============================");
 				logger.info("Replacing placeholders");
 				logger.info("===============================");
@@ -101,10 +109,17 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				entityPlaceholders.put("package_name", packageName);
 				entityPlaceholders.put("api_name", capitalize(apiName));
 				entityPlaceholders.put("entity_name", capitalize(entity.name()));
+				entityPlaceholders.put("create_dto_parameters", buildCreateDTOParameters(entity.properties()));
 				fileTemplateService.replacePlaceholders(new StringBuilder(controllersPackage)
 																				.append("/")
 																				.append(capitalize(entity.name()))
 																				.append("Controller.java")
+																				.toString(), entityPlaceholders);
+				
+				fileTemplateService.replacePlaceholders(new StringBuilder(dtoPackage)
+																				.append("/")
+																				.append(capitalize(entity.name()))
+																				.append("CreateRequestDTO.java")
 																				.toString(), entityPlaceholders);
 				
 			} catch (ApiGenException e) {
@@ -122,5 +137,42 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 	
 	private String capitalize(String text) {
 		return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
+	}
+	
+	private String buildCreateDTOParameters(List<ApiGenProperty> properties) throws ApiGenException {
+		StringBuilder result = new StringBuilder();
+		try {
+			properties.forEach(property -> {
+				switch (property.type()) {
+				case PropertyType.TEXT:
+				case PropertyType.BIG_TEXT:
+					result.append("String ");
+					break;
+				case PropertyType.INTEGER:
+					result.append("int ");
+					break;
+				case PropertyType.LONG_INTEGER:
+					result.append("long ");
+					break;
+				case PropertyType.FLOAT:
+					result.append("float ");
+					break;
+				case PropertyType.BOOLEAN:
+					result.append("boolean ");
+					break;
+				case PropertyType.DATE:
+				case PropertyType.TIMESTAMP:
+					result.append("LocalDateTime ");
+					break;
+				default:
+					logger.error("Invalid type '{}'", property.type());
+					throw new IllegalStateException("Invalid type '" + property.type() + "'");
+				}
+				result.append(property.name()).append(", ");
+			});
+		} catch (IllegalStateException e) {
+			throw new ApiGenException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+		}
+		return result.toString().substring(0, result.toString().length() - 2);
 	}
 }
