@@ -43,8 +43,9 @@ public class ApiController {
 			
 			ApiGenProperty modelProp = new ApiGenProperty("model", PropertyType.TEXT);
 			ApiGenProperty companyProp = new ApiGenProperty("company", PropertyType.TEXT);
+			ApiGenProperty dateProp = new ApiGenProperty("createdAt", PropertyType.TIMESTAMP);
 			
-			List<ApiGenProperty> planeEntityProperties = List.of(modelProp, companyProp);
+			List<ApiGenProperty> planeEntityProperties = List.of(modelProp, companyProp, dateProp);
 			ApiGenEntity planeEntity = new ApiGenEntity("plane", planeEntityProperties);
 			
 			entities.add(planeEntity);

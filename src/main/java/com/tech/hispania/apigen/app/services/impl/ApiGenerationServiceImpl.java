@@ -110,6 +110,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				entityPlaceholders.put("api_name", capitalize(apiName));
 				entityPlaceholders.put("entity_name", capitalize(entity.name()));
 				entityPlaceholders.put("create_dto_parameters", buildCreateDTOParameters(entity.properties()));
+				entityPlaceholders.put("entity_properties_imports", buildEntityPropertiesImports(entity.properties()));
 				fileTemplateService.replacePlaceholders(new StringBuilder(controllersPackage)
 																				.append("/")
 																				.append(capitalize(entity.name()))
@@ -134,7 +135,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		
 		return null;
 	}
-	
+
 	private String capitalize(String text) {
 		return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
 	}
@@ -174,5 +175,20 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 			throw new ApiGenException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
 		}
 		return result.toString().substring(0, result.toString().length() - 2);
+	}
+	
+	private String buildEntityPropertiesImports(List<ApiGenProperty> properties) {
+		StringBuilder result = new StringBuilder();
+		properties.forEach(property -> {
+			switch (property.type()) {
+			case PropertyType.DATE:
+			case PropertyType.TIMESTAMP:
+				result.append("import java.time.LocalDateTime;");
+				break;
+			default:
+				logger.debug("No import to add");
+			}
+		});
+		return result.toString();
 	}
 }

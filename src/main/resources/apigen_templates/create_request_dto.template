@@ -1,4 +1,6 @@
 package com.apigen.{package_name}.ui.dto;
 
+{entity_properties_imports}
+
 public record {entity_name}CreateRequestDTO({create_dto_parameters}) {
 }
