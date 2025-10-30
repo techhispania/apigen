@@ -101,7 +101,12 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 																							.append("/")
 																							.append(capitalize(entity.name()))
 																							.append("CreateRequestDTO.java")
-																							.toString());				
+																							.toString());
+				fileTemplateService.copyTemplateInFile("mapping", new StringBuilder(dtoMappingPackage)
+						.append("/")
+						.append(capitalize(entity.name()))
+						.append("Mapping.java")
+						.toString());
 				logger.info("===============================");
 				logger.info("Replacing placeholders");
 				logger.info("===============================");
@@ -111,6 +116,8 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				entityPlaceholders.put("entity_name", capitalize(entity.name()));
 				entityPlaceholders.put("create_dto_parameters", buildCreateDTOParameters(entity.properties()));
 				entityPlaceholders.put("entity_properties_imports", buildEntityPropertiesImports(entity.properties()));
+				entityPlaceholders.put("mapping_imports", buildMappingImports(packageName, entity.name()));
+				entityPlaceholders.put("create_request_mapping_to_dto_setters", buildEntityCreateRequestMappingToDTOSetters(entity.properties()));
 				fileTemplateService.replacePlaceholders(new StringBuilder(controllersPackage)
 																				.append("/")
 																				.append(capitalize(entity.name()))
@@ -122,7 +129,11 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 																				.append(capitalize(entity.name()))
 																				.append("CreateRequestDTO.java")
 																				.toString(), entityPlaceholders);
-				
+				fileTemplateService.replacePlaceholders(new StringBuilder(dtoMappingPackage)
+																				.append("/")
+																				.append(capitalize(entity.name()))
+																				.append("Mapping.java")
+																				.toString(), entityPlaceholders);
 			} catch (ApiGenException e) {
 				logger.warn("Error creating files for entity '{}'.", entity.name(), e);
 			}
@@ -189,6 +200,20 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				logger.debug("No import to add");
 			}
 		});
+		return result.toString();
+	}
+	
+	private String buildEntityCreateRequestMappingToDTOSetters(List<ApiGenProperty> properties) {
+		StringBuilder result = new StringBuilder();
+		properties.forEach(property -> {
+			result.append("entity.set").append(capitalize(property.name())).append("(").append("dto.get").append(capitalize(property.name())).append("());").append("\n\t\t");
+		});
+		return result.toString().substring(0, result.toString().length() - 3);
+	}
+	
+	private String buildMappingImports(String apiName, String entityName) {
+		StringBuilder result = new StringBuilder();		
+		result.append("import com.apigen.").append(apiName).append(".ui.dto.").append(capitalize(entityName)).append("CreateRequestDTO;");
 		return result.toString();
 	}
 }
