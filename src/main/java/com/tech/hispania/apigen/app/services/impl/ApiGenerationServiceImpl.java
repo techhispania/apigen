@@ -15,6 +15,7 @@ import com.tech.hispania.apigen.app.exceptions.ApiGenException;
 import com.tech.hispania.apigen.app.services.ApiGenerationService;
 import com.tech.hispania.apigen.app.services.FileSystemService;
 import com.tech.hispania.apigen.app.services.FileTemplateService;
+import com.tech.hispania.apigen.app.services.TextUtilsService;
 import com.tech.hispania.apigen.domain.model.ApiGenEntity;
 import com.tech.hispania.apigen.domain.model.ApiGenProperty;
 import com.tech.hispania.apigen.domain.model.PropertyType;
@@ -34,10 +35,14 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 	@Autowired
 	private FileTemplateService fileTemplateService;
 	
+	@Autowired
+	private TextUtilsService textUtilsService;
+	
 	@Override
 	public String generate(String apiName, Set<ApiGenEntity> entities) throws ApiGenException {
 		
 		String packageName = apiName.toLowerCase().replace(" ", "/");
+		String apiNameCapitalized = textUtilsService.capitalize(apiName);
 		
 		String javaPackage = new StringBuilder(JAVA_BASE_PATH).append(packageName).append("/").toString();
 		String controllersPackage = new StringBuilder(javaPackage).append("ui/controllers").toString();
@@ -67,26 +72,28 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 		logger.info("===============================");
 		logger.info("Creating files");
 		logger.info("===============================");
-		fileSystemService.createFile(javaPackage, new StringBuilder(capitalize(apiName)).append("Application.java").toString());
-		fileTemplateService.copyTemplateInFile("application", new StringBuilder(javaPackage).append(capitalize(apiName)).append("Application.java").toString());
+		fileSystemService.createFile(javaPackage, new StringBuilder(apiNameCapitalized).append("Application.java").toString());
+		fileTemplateService.copyTemplateInFile("application", new StringBuilder(javaPackage).append(apiNameCapitalized).append("Application.java").toString());
 		Map<String, String> placeholders = new HashMap<>();
 		placeholders.put("package_name", packageName);
-		placeholders.put("api_name", capitalize(apiName));
-		fileTemplateService.replacePlaceholders(new StringBuilder(javaPackage).append(capitalize(apiName)).append("Application.java").toString(), placeholders);
+		placeholders.put("api_name", apiNameCapitalized);
+		fileTemplateService.replacePlaceholders(new StringBuilder(javaPackage).append(apiNameCapitalized).append("Application.java").toString(), placeholders);
 		entities.forEach(entity -> {
 			try {
 				logger.info("===============================");
 				logger.info("Creating files for entity '{}'", entity);
 				logger.info("===============================");
-				fileSystemService.createFile(entitiesPackage, new StringBuilder(capitalize(entity.name())).append(".java").toString());
-				fileSystemService.createFile(controllersPackage, new StringBuilder(capitalize(entity.name())).append("Controller.java").toString());
-				fileSystemService.createFile(dtoPackage, new StringBuilder(capitalize(entity.name())).append("CreateRequestDTO.java").toString());
-				fileSystemService.createFile(dtoPackage, new StringBuilder(capitalize(entity.name())).append("CreateResponseDTO.java").toString());
-				fileSystemService.createFile(dtoMappingPackage, new StringBuilder(capitalize(entity.name())).append("Mapping.java").toString());
-				fileSystemService.createFile(controllersPackage, new StringBuilder(capitalize(entity.name())).append("Controller.java").toString());
-				fileSystemService.createFile(persistencePackage, new StringBuilder(capitalize(entity.name())).append("Repository.java").toString());
-				fileSystemService.createFile(servicesPackage, new StringBuilder(capitalize(entity.name())).append("Service.java").toString());
-				fileSystemService.createFile(servicesImplPackage, new StringBuilder(capitalize(entity.name())).append("ServiceImpl.java").toString());
+				String entityNameCapitalized = textUtilsService.capitalize(entity.name());
+				
+				fileSystemService.createFile(entitiesPackage, new StringBuilder(entityNameCapitalized).append(".java").toString());
+				fileSystemService.createFile(controllersPackage, new StringBuilder(entityNameCapitalized).append("Controller.java").toString());
+				fileSystemService.createFile(dtoPackage, new StringBuilder(entityNameCapitalized).append("CreateRequestDTO.java").toString());
+				fileSystemService.createFile(dtoPackage, new StringBuilder(entityNameCapitalized).append("CreateResponseDTO.java").toString());
+				fileSystemService.createFile(dtoMappingPackage, new StringBuilder(entityNameCapitalized).append("Mapping.java").toString());
+				fileSystemService.createFile(controllersPackage, new StringBuilder(entityNameCapitalized).append("Controller.java").toString());
+				fileSystemService.createFile(persistencePackage, new StringBuilder(entityNameCapitalized).append("Repository.java").toString());
+				fileSystemService.createFile(servicesPackage, new StringBuilder(entityNameCapitalized).append("Service.java").toString());
+				fileSystemService.createFile(servicesImplPackage, new StringBuilder(entityNameCapitalized).append("ServiceImpl.java").toString());
 				
 				
 				logger.info("===============================");
@@ -94,17 +101,17 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				logger.info("===============================");
 				fileTemplateService.copyTemplateInFile("controller", new StringBuilder(controllersPackage)
 																							.append("/")
-																							.append(capitalize(entity.name()))
+																							.append(entityNameCapitalized)
 																							.append("Controller.java")
 																							.toString());
 				fileTemplateService.copyTemplateInFile("create_request_dto", new StringBuilder(dtoPackage)
 																							.append("/")
-																							.append(capitalize(entity.name()))
+																							.append(entityNameCapitalized)
 																							.append("CreateRequestDTO.java")
 																							.toString());
 				fileTemplateService.copyTemplateInFile("mapping", new StringBuilder(dtoMappingPackage)
 						.append("/")
-						.append(capitalize(entity.name()))
+						.append(entityNameCapitalized)
 						.append("Mapping.java")
 						.toString());
 				logger.info("===============================");
@@ -112,26 +119,26 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				logger.info("===============================");
 				Map<String, String> entityPlaceholders = new HashMap<>();
 				entityPlaceholders.put("package_name", packageName);
-				entityPlaceholders.put("api_name", capitalize(apiName));
-				entityPlaceholders.put("entity_name", capitalize(entity.name()));
+				entityPlaceholders.put("api_name", apiNameCapitalized);
+				entityPlaceholders.put("entity_name", entityNameCapitalized);
 				entityPlaceholders.put("create_dto_parameters", buildCreateDTOParameters(entity.properties()));
 				entityPlaceholders.put("entity_properties_imports", buildEntityPropertiesImports(entity.properties()));
-				entityPlaceholders.put("mapping_imports", buildMappingImports(packageName, entity.name()));
+				entityPlaceholders.put("mapping_imports", buildMappingImports(packageName, entityNameCapitalized));
 				entityPlaceholders.put("create_request_mapping_to_dto_setters", buildEntityCreateRequestMappingToDTOSetters(entity.properties()));
 				fileTemplateService.replacePlaceholders(new StringBuilder(controllersPackage)
 																				.append("/")
-																				.append(capitalize(entity.name()))
+																				.append(entityNameCapitalized)
 																				.append("Controller.java")
 																				.toString(), entityPlaceholders);
 				
 				fileTemplateService.replacePlaceholders(new StringBuilder(dtoPackage)
 																				.append("/")
-																				.append(capitalize(entity.name()))
+																				.append(entityNameCapitalized)
 																				.append("CreateRequestDTO.java")
 																				.toString(), entityPlaceholders);
 				fileTemplateService.replacePlaceholders(new StringBuilder(dtoMappingPackage)
 																				.append("/")
-																				.append(capitalize(entity.name()))
+																				.append(entityNameCapitalized)
 																				.append("Mapping.java")
 																				.toString(), entityPlaceholders);
 			} catch (ApiGenException e) {
@@ -145,10 +152,6 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 //		fileSystemService.removeDirectory("api-rest");
 		
 		return null;
-	}
-
-	private String capitalize(String text) {
-		return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
 	}
 	
 	private String buildCreateDTOParameters(List<ApiGenProperty> properties) throws ApiGenException {
@@ -206,14 +209,15 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 	private String buildEntityCreateRequestMappingToDTOSetters(List<ApiGenProperty> properties) {
 		StringBuilder result = new StringBuilder();
 		properties.forEach(property -> {
-			result.append("entity.set").append(capitalize(property.name())).append("(").append("dto.get").append(capitalize(property.name())).append("());").append("\n\t\t");
+			String propertyNameCapitalized = textUtilsService.capitalize(property.name());
+			result.append("entity.set").append(propertyNameCapitalized).append("(").append("dto.get").append(propertyNameCapitalized).append("());").append("\n\t\t");
 		});
 		return result.toString().substring(0, result.toString().length() - 3);
 	}
 	
-	private String buildMappingImports(String apiName, String entityName) {
+	private String buildMappingImports(String apiName, String entityNameCapitalized) {
 		StringBuilder result = new StringBuilder();		
-		result.append("import com.apigen.").append(apiName).append(".ui.dto.").append(capitalize(entityName)).append("CreateRequestDTO;");
+		result.append("import com.apigen.").append(apiName).append(".ui.dto.").append(entityNameCapitalized).append("CreateRequestDTO;");
 		return result.toString();
 	}
 }
