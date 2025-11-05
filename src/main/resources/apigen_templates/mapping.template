@@ -7,7 +7,7 @@ public class {entity_name}Mapping {
 	public static {entity_name} parseCreateRequestDTOToEntity({entity_name}CreateRequestDTO dto) {
 		{entity_name} entity = new {entity_name}();
 		 
-		{create_request_mapping_to_dto_setters}
+		{create_request_mapping_to_entity_setters}
 		 
 		return entity;
 	}
