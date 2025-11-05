@@ -48,4 +48,13 @@ public interface PlaceholdersService {
 	 * @return The string to be replaced in the class by the placeholder "{mapping_imports}"
 	 */
 	String buildMappingImports(String apiName, String entityNameCapitalized);
+	
+	/**
+	 * Method to build the placeholder value to be used in the classes generated from 
+	 * the template "create_response_dto.template".
+	 * 
+	 * @param properties List of properties of one Entity defined by the user
+	 * @return The string to be replaced in the class by the placeholder "{create_response_dto_attributes}"
+	 */
+	String buildCreateResponseDTOAttributes(List<ApiGenProperty> properties);
 }

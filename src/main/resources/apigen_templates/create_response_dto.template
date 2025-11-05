@@ -1,0 +1,8 @@
+package com.apigen.{package_name}.ui.dto;
+
+{entity_properties_imports}
+
+public class {entity_name}CreateResponseDTO extends ResponseDTO {
+
+	{create_response_dto_attributes}
+}

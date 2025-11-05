@@ -27,32 +27,11 @@ public class PlaceholdersServiceImpl implements PlaceholdersService {
 		StringBuilder result = new StringBuilder();
 		try {
 			properties.forEach(property -> {
-				switch (property.type()) {
-				case PropertyType.TEXT:
-				case PropertyType.BIG_TEXT:
-					result.append("String ");
-					break;
-				case PropertyType.INTEGER:
-					result.append("int ");
-					break;
-				case PropertyType.LONG_INTEGER:
-					result.append("long ");
-					break;
-				case PropertyType.FLOAT:
-					result.append("float ");
-					break;
-				case PropertyType.BOOLEAN:
-					result.append("boolean ");
-					break;
-				case PropertyType.DATE:
-				case PropertyType.TIMESTAMP:
-					result.append("LocalDateTime ");
-					break;
-				default:
-					logger.error("Invalid type '{}'", property.type());
-					throw new IllegalStateException("Invalid type '" + property.type() + "'");
+				try {
+					result.append(getAttributeType(property.type())).append(property.name()).append(", ");
+				} catch (Exception e) {
+					logger.error("Entity {} can't be added to placeholder", property.name());
 				}
-				result.append(property.name()).append(", ");
 			});
 		} catch (IllegalStateException e) {
 			throw new ApiGenException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
@@ -91,5 +70,62 @@ public class PlaceholdersServiceImpl implements PlaceholdersService {
 		StringBuilder result = new StringBuilder();		
 		result.append("import com.apigen.").append(apiName).append(".ui.dto.").append(entityNameCapitalized).append("CreateRequestDTO;");
 		return result.toString();
+	}
+	
+	@Override
+	public String buildCreateResponseDTOAttributes(List<ApiGenProperty> properties) {
+		StringBuilder result = new StringBuilder();
+		properties.forEach(property -> {
+			try {
+				result.append("private ").append(getAttributeType(property.type())).append(property.name()).append(";\n\t");
+			} catch (Exception e) {
+				logger.error("Entity {} can't be added to the placeholder", property.name());
+			}
+		});
+		result.append("\n");
+		properties.forEach(property -> {
+			try {
+				result.append("\tpublic ").append(getAttributeType(property.type())).append("get").append(textUtilsService.capitalize(property.name())).append("() {\n");
+				result.append("\t\treturn this.").append(property.name()).append(";\n");
+				result.append("\t}\n\n");
+				
+				result.append("\tpublic void ").append("set").append(textUtilsService.capitalize(property.name())).append("(").append(getAttributeType(property.type())).append(property.name()).append(") {\n");
+				result.append("\t\tthis.").append(property.name()).append(" = ").append(property.name()).append(";\n");
+				result.append("\t}\n\n");
+			} catch (Exception e) {
+				logger.error("Entity methods {} can't be added to the placeholder", property.name());
+			}
+		});		
+		return result.toString().substring(0, result.toString().length() - 2);
+	}
+	
+	private String getAttributeType(PropertyType type) throws Exception {
+		String result = "";
+		switch (type) {
+		case PropertyType.TEXT:
+		case PropertyType.BIG_TEXT:
+			result = "String ";
+			break;
+		case PropertyType.INTEGER:
+			result = "int ";
+			break;
+		case PropertyType.LONG_INTEGER:
+			result = "long ";
+			break;
+		case PropertyType.FLOAT:
+			result = "float ";
+			break;
+		case PropertyType.BOOLEAN:
+			result = "boolean ";
+			break;
+		case PropertyType.DATE:
+		case PropertyType.TIMESTAMP:
+			result = "LocalDateTime ";
+			break;
+		default:
+			logger.error("Invalid type '{}'", type);
+			throw new IllegalStateException("Invalid type '" + type + "'");
+		}
+		return result;
 	}
 }

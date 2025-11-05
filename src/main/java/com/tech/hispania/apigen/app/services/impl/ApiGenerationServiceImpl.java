@@ -109,11 +109,16 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 																							.append(entityNameCapitalized)
 																							.append("CreateRequestDTO.java")
 																							.toString());
+				fileTemplateService.copyTemplateInFile("create_response_dto", new StringBuilder(dtoPackage)
+																							.append("/")
+																							.append(entityNameCapitalized)
+																							.append("CreateResponseDTO.java")
+																							.toString());
 				fileTemplateService.copyTemplateInFile("mapping", new StringBuilder(dtoMappingPackage)
-						.append("/")
-						.append(entityNameCapitalized)
-						.append("Mapping.java")
-						.toString());
+																							.append("/")
+																							.append(entityNameCapitalized)
+																							.append("Mapping.java")
+																							.toString());
 				logger.info("===============================");
 				logger.info("Replacing placeholders");
 				logger.info("===============================");
@@ -125,6 +130,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				entityPlaceholders.put("entity_properties_imports", placeholdersService.buildEntityPropertiesImports(entity.properties()));
 				entityPlaceholders.put("mapping_imports", placeholdersService.buildMappingImports(packageName, entityNameCapitalized));
 				entityPlaceholders.put("create_request_mapping_to_entity_setters", placeholdersService.buildCreateRequestMappingToEntitySetters(entity.properties()));
+				entityPlaceholders.put("create_response_dto_attributes", placeholdersService.buildCreateResponseDTOAttributes(entity.properties()));
 				fileTemplateService.replacePlaceholders(new StringBuilder(controllersPackage)
 																				.append("/")
 																				.append(entityNameCapitalized)
@@ -135,6 +141,11 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 																				.append("/")
 																				.append(entityNameCapitalized)
 																				.append("CreateRequestDTO.java")
+																				.toString(), entityPlaceholders);
+				fileTemplateService.replacePlaceholders(new StringBuilder(dtoPackage)
+																				.append("/")
+																				.append(entityNameCapitalized)
+																				.append("CreateResponseDTO.java")
 																				.toString(), entityPlaceholders);
 				fileTemplateService.replacePlaceholders(new StringBuilder(dtoMappingPackage)
 																				.append("/")
