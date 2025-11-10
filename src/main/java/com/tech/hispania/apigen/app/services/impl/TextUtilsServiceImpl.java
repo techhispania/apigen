@@ -10,7 +10,7 @@ public class TextUtilsServiceImpl implements TextUtilsService {
 	@Override
 	public String capitalize(String text) {
 		String result = text.trim();
-		result = new StringBuilder(result.substring(0, 1).toUpperCase()).append(result.substring(1).toLowerCase()).toString();
+		result = new StringBuilder(result.substring(0, 1).toUpperCase()).append(result.substring(1)).toString();
 		result = result.replace(" ", "_");
 		
 		return result;
