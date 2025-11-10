@@ -66,9 +66,20 @@ public class PlaceholdersServiceImpl implements PlaceholdersService {
 	}
 	
 	@Override
+	public String buildCreateResponseMappingToDtoSetters(List<ApiGenProperty> properties) {
+		StringBuilder result = new StringBuilder();
+		properties.forEach(property -> {
+			String propertyNameCapitalized = textUtilsService.capitalize(property.name());
+			result.append("dto.set").append(propertyNameCapitalized).append("(").append("entity.get").append(propertyNameCapitalized).append("());").append("\n\t\t");
+		});
+		return result.toString().substring(0, result.toString().length() - 3);
+	}
+	
+	@Override
 	public String buildMappingImports(String apiName, String entityNameCapitalized) {
 		StringBuilder result = new StringBuilder();		
-		result.append("import com.apigen.").append(apiName).append(".ui.dto.").append(entityNameCapitalized).append("CreateRequestDTO;");
+		result.append("import com.apigen.").append(apiName).append(".ui.dto.").append(entityNameCapitalized).append("CreateRequestDTO;\n");
+		result.append("import com.apigen.").append(apiName).append(".ui.dto.").append(entityNameCapitalized).append("CreateResponseDTO;");
 		return result.toString();
 	}
 	

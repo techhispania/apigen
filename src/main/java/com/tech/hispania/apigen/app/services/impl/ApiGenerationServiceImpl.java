@@ -130,6 +130,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				entityPlaceholders.put("entity_properties_imports", placeholdersService.buildEntityPropertiesImports(entity.properties()));
 				entityPlaceholders.put("mapping_imports", placeholdersService.buildMappingImports(packageName, entityNameCapitalized));
 				entityPlaceholders.put("create_request_mapping_to_entity_setters", placeholdersService.buildCreateRequestMappingToEntitySetters(entity.properties()));
+				entityPlaceholders.put("create_response_mapping_to_dto_setters", placeholdersService.buildCreateResponseMappingToDtoSetters(entity.properties()));
 				entityPlaceholders.put("create_response_dto_attributes", placeholdersService.buildCreateResponseDTOAttributes(entity.properties()));
 				fileTemplateService.replacePlaceholders(new StringBuilder(controllersPackage)
 																				.append("/")

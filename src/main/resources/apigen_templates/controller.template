@@ -41,7 +41,7 @@ public class {entity_name}Controller {
 	public ResponseEntity<ResponseDTO> create({entity_name}CreateRequestDTO dto) {
 		logger.info("Create request. {}", dto);
 		
-		{entity_name} result = service.save(mapping.parseToEntity(dto));
+		{entity_name} result = service.save(mapping.parseCreateRequestDTOToEntity(dto));
 				
 		{entity_name}CreateResponseDTO response = new {entity_name}CreateResponseDTO();
 		response.set{entity_name}(result);

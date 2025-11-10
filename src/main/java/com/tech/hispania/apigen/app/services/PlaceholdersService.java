@@ -38,6 +38,19 @@ public interface PlaceholdersService {
 	String buildCreateRequestMappingToEntitySetters(List<ApiGenProperty> properties);
 	
 	/**
+	 * Method to build the placeholder value to be used in the classes generated from
+	 * the template "mapping.template"
+	 * This method generates the code to transform an entity into one dto
+	 * 
+	 * @param properties List of properties of one Entity defined by the user
+	 * @return The string to be replaced in the class by the placeholder "{create_response_mapping_to_dto_setters}"
+	 * 
+	 * @param properties
+	 * @return
+	 */
+	String buildCreateResponseMappingToDtoSetters(List<ApiGenProperty> properties);
+	
+	/**
 	 * Method to build the placeholder value to be used in the classes generated from 
 	 * the template "mapping.template".
 	 * It generates the import to be added that corresponds to the DTO class used in the

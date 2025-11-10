@@ -11,4 +11,12 @@ public class {entity_name}Mapping {
 		 
 		return entity;
 	}
+	
+	public static {entity_name}CreateResponseDTO parseEntityToCreateResponseDTO({entity_name} entity) {
+		{entity_name}CreateResponseDTO dto = new {entity_name}CreateResponseDTO();
+		
+		{create_response_mapping_to_dto_setters}
+		
+		return dto;
+	}
 }
