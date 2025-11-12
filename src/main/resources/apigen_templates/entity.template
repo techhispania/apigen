@@ -1,0 +1,23 @@
+package com.apigen.{package_name}.domain.model.entities;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+{entity_imports}
+
+@Entity
+@Table(name="{entity_table_name}")
+public class {entity_name} {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+
+	{entity_attributes}
+	
+	{entity_getters_setters}
+	
+	{entity_to_string}
+}

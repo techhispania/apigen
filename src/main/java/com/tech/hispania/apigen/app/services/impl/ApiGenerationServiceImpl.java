@@ -84,6 +84,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				logger.info("Creating files for entity '{}'", entity);
 				logger.info("===============================");
 				String entityNameCapitalized = textUtilsService.capitalize(entity.name());
+				String entityTableName = textUtilsService.buildEntityTableName(entity.name());
 				
 				fileSystemService.createFile(entitiesPackage, new StringBuilder(entityNameCapitalized).append(".java").toString());
 				fileSystemService.createFile(controllersPackage, new StringBuilder(entityNameCapitalized).append("Controller.java").toString());
@@ -99,6 +100,11 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				logger.info("===============================");
 				logger.info("Copying content from templates");
 				logger.info("===============================");
+				fileTemplateService.copyTemplateInFile("entity", new StringBuilder(entitiesPackage)
+																							.append("/")
+																							.append(entityNameCapitalized)
+																							.append(".java")
+																							.toString());
 				fileTemplateService.copyTemplateInFile("controller", new StringBuilder(controllersPackage)
 																							.append("/")
 																							.append(entityNameCapitalized)
@@ -132,6 +138,12 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				entityPlaceholders.put("create_request_mapping_to_entity_setters", placeholdersService.buildCreateRequestMappingToEntitySetters(entity.properties()));
 				entityPlaceholders.put("create_response_mapping_to_dto_setters", placeholdersService.buildCreateResponseMappingToDtoSetters(entity.properties()));
 				entityPlaceholders.put("create_response_dto_attributes", placeholdersService.buildCreateResponseDTOAttributes(entity.properties()));
+				entityPlaceholders.put("entity_table_name", entityTableName);
+				fileTemplateService.replacePlaceholders(new StringBuilder(entitiesPackage)
+																				.append("/")
+																				.append(entityNameCapitalized)
+																				.append(".java")
+																				.toString(), entityPlaceholders);
 				fileTemplateService.replacePlaceholders(new StringBuilder(controllersPackage)
 																				.append("/")
 																				.append(entityNameCapitalized)

@@ -30,4 +30,19 @@ public class TextUtilsServiceTest {
 		assertEquals("Test", result6);
 		assertEquals("Test_test", result7);
 	}
+	
+	@Test
+	void givenDifferentTextsThenConvertInTableNames() {
+		String result1 = textUtilsService.buildEntityTableName("user");
+		String result2 = textUtilsService.buildEntityTableName("User");
+		String result3 = textUtilsService.buildEntityTableName("userCompany");
+		String result4 = textUtilsService.buildEntityTableName("UserCompany");
+		String result5 = textUtilsService.buildEntityTableName("USER");
+		
+		assertEquals("users", result1);
+		assertEquals("users", result2);
+		assertEquals("user_companies", result3);
+		assertEquals("user_companies", result4);
+		assertEquals("users", result5);
+	}
 }
