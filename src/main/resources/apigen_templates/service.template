@@ -1,0 +1,57 @@
+package com.apigen.{package_name}.app.services;
+
+import java.lang.Exception;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.apigen.{package_name}.domain.model.entities.{entity_name};
+
+public interface {entity_name}Service {
+
+	/**
+	 * Create a new {entity_name} in the database.
+	 * 
+	 * @param {entity_name_lower} The {entity_name} object to store in the database
+	 * @return The {entity_name} object stored in the database. It includes the auto-generated ID.
+	 * @throws Exception
+	 */
+	{entity_name} create{entity_name}({entity_name} {entity_name_lower}) throws Exception;
+
+	/**
+	 * Get all the {entity_name} objects stored in the database
+	 * 
+	 * @return List of {entity_name} objects found. Empty list if no objects are found.
+	 * @throws Exception
+	 */
+	List<{entity_name}> getAll{entity_name}() throws Exception;
+
+	/**
+	 * Get one specific {entity_name} looking for the ID provided
+	 * 
+	 * @param id The Identifier of the {entity_name}
+	 * @return Optional of the {entity_name} entity found in database. Empty if no object found
+	 * @throws Exception
+	 */
+	Optional<{entity_name}> get{entity_name}(Long id) throws Exception;
+
+	/**
+	 * Update one {entity_name} that must to be present in database.
+	 * In case the {entity_name} not exists in database the method will
+	 * throw an Exception.
+	 * 
+	 * @param id {entity_name} identifier
+	 * @param {entity_name_lower} {entity_name} object to be updated
+	 * @return {entity_name} object after being updated
+	 * @throws Exception
+	 */
+	{entity_name} update{entity_name}(Long id, {entity_name} {entity_name_lower}) throws Exception;
+
+	/**
+	 * Delete one {entity_name} in base of the id received.
+	 * 
+	 * @param id {entity_name} identifier
+	 * @throws Exception
+	 */
+	void delete{entity_name}(Long id) throws Exception;
+}
