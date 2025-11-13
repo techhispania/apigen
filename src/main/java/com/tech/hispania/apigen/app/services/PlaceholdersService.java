@@ -3,6 +3,7 @@ package com.tech.hispania.apigen.app.services;
 import java.util.List;
 
 import com.tech.hispania.apigen.app.exceptions.ApiGenException;
+import com.tech.hispania.apigen.domain.model.ApiGenEntity;
 import com.tech.hispania.apigen.domain.model.ApiGenProperty;
 
 public interface PlaceholdersService {
@@ -88,4 +89,13 @@ public interface PlaceholdersService {
 	 * @return The string to be replaced in the class by the placeholder "{entity_getters_setters}"
 	 */
 	String buildEntityGettersSetters(List<ApiGenProperty> properties);
+	
+	/**
+	 * Method to build the placeholder value to be used in the classes generated from the template
+	 * "entity.template"
+	 * 
+	 * @param entity Entity object defined by the user that contains the name and properties
+	 * @return The string to be replaced in the class by the placeholder "{entity_to_string}"
+	 */
+	String buildEntityToString(ApiGenEntity entity);
 }

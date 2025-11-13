@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.tech.hispania.apigen.app.exceptions.ApiGenException;
 import com.tech.hispania.apigen.app.services.PlaceholdersService;
 import com.tech.hispania.apigen.app.services.TextUtilsService;
+import com.tech.hispania.apigen.domain.model.ApiGenEntity;
 import com.tech.hispania.apigen.domain.model.ApiGenProperty;
 import com.tech.hispania.apigen.domain.model.PropertyType;
 
@@ -142,6 +143,23 @@ public class PlaceholdersServiceImpl implements PlaceholdersService {
 		});
 		
 		return result.toString().substring(0, result.length() - 3);
+	}
+	
+	@Override
+	public String buildEntityToString(ApiGenEntity entity) {
+		StringBuilder result = new StringBuilder();
+		
+		result.append("public String toString() {\n\t\t");
+		result.append("return \"").append(textUtilsService.capitalize(entity.name())).append("[");
+		
+		entity.properties().forEach(property -> {
+			result.append(property.name()).append("=\" + ").append("this.").append(property.name()).append(" + \", ");
+		});
+		result.delete(result.length() - 2, result.length());
+		result.append("]\";\n");
+		result.append("\t}");
+		
+		return result.toString();
 	}
 	
 	private String getAttributeType(PropertyType type) throws Exception {

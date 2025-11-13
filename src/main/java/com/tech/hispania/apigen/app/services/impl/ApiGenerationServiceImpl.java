@@ -141,6 +141,7 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 				entityPlaceholders.put("entity_table_name", entityTableName);
 				entityPlaceholders.put("entity_attributes", placeholdersService.buildEntityAttributes(entity.properties()));
 				entityPlaceholders.put("entity_getters_setters", placeholdersService.buildEntityGettersSetters(entity.properties()));
+				entityPlaceholders.put("entity_to_string", placeholdersService.buildEntityToString(entity));
 				fileTemplateService.replacePlaceholders(new StringBuilder(entitiesPackage)
 																				.append("/")
 																				.append(entityNameCapitalized)
