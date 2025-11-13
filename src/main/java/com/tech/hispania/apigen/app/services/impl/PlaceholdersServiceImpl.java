@@ -110,6 +110,19 @@ public class PlaceholdersServiceImpl implements PlaceholdersService {
 		return result.toString().substring(0, result.toString().length() - 2);
 	}
 	
+	@Override
+	public String buildEntityAttributes(List<ApiGenProperty> properties) {
+		StringBuilder result = new StringBuilder();
+		properties.forEach(property -> {
+			try {
+				result.append("private ").append(getAttributeType(property.type())).append(property.name()).append(";\n\n\t");
+			} catch (Exception e) {
+				logger.error("Attribute '{}' can't be added to the placeholder.{}", property.name(), e.getMessage());
+			}
+		});
+		return result.toString().substring(0, result.length() - 3);
+	}
+	
 	private String getAttributeType(PropertyType type) throws Exception {
 		String result = "";
 		switch (type) {
