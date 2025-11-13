@@ -1,0 +1,9 @@
+package com.apigen.{package_name}.infrastructure.persistence;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.apigen.{package_name}.domain.model.entities.{entity_name};
+
+public interface {entity_name}Repository extends JpaRepository<{entity_name}, Long> {
+
+}

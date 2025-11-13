@@ -125,6 +125,11 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 																							.append(entityNameCapitalized)
 																							.append("Mapping.java")
 																							.toString());
+				fileTemplateService.copyTemplateInFile("repository", new StringBuilder(persistencePackage)
+																							.append("/")
+																							.append(entityNameCapitalized)
+																							.append("Repository.java")
+																							.toString());
 				logger.info("===============================");
 				logger.info("Replacing placeholders");
 				logger.info("===============================");
@@ -167,6 +172,11 @@ public class ApiGenerationServiceImpl implements ApiGenerationService {
 																				.append("/")
 																				.append(entityNameCapitalized)
 																				.append("Mapping.java")
+																				.toString(), entityPlaceholders);
+				fileTemplateService.replacePlaceholders(new StringBuilder(persistencePackage)
+																				.append("/")
+																				.append(entityNameCapitalized)
+																				.append("Repository.java")
 																				.toString(), entityPlaceholders);
 			} catch (ApiGenException e) {
 				logger.warn("Error creating files for entity '{}'.", entity.name(), e);
