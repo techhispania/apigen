@@ -123,6 +123,27 @@ public class PlaceholdersServiceImpl implements PlaceholdersService {
 		return result.toString().substring(0, result.length() - 3);
 	}
 	
+	@Override
+	public String buildEntityGettersSetters(List<ApiGenProperty> properties) {
+		StringBuilder result = new StringBuilder();
+		
+		properties.forEach(property -> {
+			try {
+				result.append("public ").append(getAttributeType(property.type())).append("get").append(textUtilsService.capitalize(property.name())).append("() {\n");
+				result.append("\t\t").append("return this.").append(property.name()).append(";\n");
+				result.append("\t}\n\n");
+				
+				result.append("\tpublic void ").append("set").append(textUtilsService.capitalize(property.name())).append("(").append(getAttributeType(property.type())).append(property.name()).append(") {\n");
+				result.append("\t\t").append("this.").append(property.name()).append(" = ").append(property.name()).append(";\n");
+				result.append("\t}\n\n\t");
+			} catch (Exception e) {
+				logger.error("Getters and setters can't be added for the attribute '{}'. {}", property.name(), e.getMessage());
+			}
+		});
+		
+		return result.toString().substring(0, result.length() - 3);
+	}
+	
 	private String getAttributeType(PropertyType type) throws Exception {
 		String result = "";
 		switch (type) {
